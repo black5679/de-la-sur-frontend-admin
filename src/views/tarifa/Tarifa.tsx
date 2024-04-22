@@ -69,6 +69,11 @@ const columns = [
     sort: true,
   },
   {
+    Header: "Moneda",
+    accessor: "codigoMoneda",
+    sort: true,
+  },
+  {
     Header: "Acciones",
     accessor: "acciones",
     sort: false,

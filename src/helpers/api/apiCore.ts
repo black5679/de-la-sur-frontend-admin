@@ -68,9 +68,9 @@ class APICore {
   get = (url: string, params: any) => {
     let response;
     if (params) {
-      var queryString = params
+      let queryString = params
         ? Object.keys(params)
-            .filter(x => params[x])
+            .filter(key => typeof params[key] === 'boolean' ? (params[key] !== null && params[key] !== undefined) : params[key] )
             .map((key) => key + "=" + params[key])
             .join("&")
         : "";
@@ -84,7 +84,7 @@ class APICore {
   getFile = (url: string, params: any) => {
     let response;
     if (params) {
-      var queryString = params
+      let queryString = params
         ? Object.keys(params)
             .map((key) => key + "=" + params[key])
             .join("&")

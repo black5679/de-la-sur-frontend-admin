@@ -3,5 +3,6 @@ export interface IGetTarifaResponse{
     fuente: string,
     material: string,
     pureza: string,
-    precio: number
+    precio: number,
+    codigoMoneda: string
 }
