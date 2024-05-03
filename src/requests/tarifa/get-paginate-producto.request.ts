@@ -1,11 +1,9 @@
 import { IPaginateRequest } from "../../base/paginate.request";
 
-export interface IGetPaginateTarifaRequest extends IPaginateRequest{
-    materiales?: string
+export interface IGetPaginateProductoRequest extends IPaginateRequest{
 }
 
-export class GetPaginateTarifaRequest implements IGetPaginateTarifaRequest{
-    materiales: string | undefined;
+export class GetPaginateProductoRequest implements IGetPaginateProductoRequest{
     page: number;
     pageSize: number;
     orderType: boolean;

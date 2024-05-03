@@ -86,7 +86,7 @@ interface IFilter {
 }
 
 // main component
-const Customers = () => {
+const Tarifa = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [request, setRequest] = useState<IGetPaginateTarifaRequest>(new GetPaginateTarifaRequest());
   const [filter, setFilter] = useState<IFilter>({ materiales: "" });
@@ -142,12 +142,7 @@ const Customers = () => {
     <React.Fragment>
       <PageTitle
         breadCrumbItems={[
-          { label: "Ecommerce", path: "/apps/ecommerce/customers" },
-          {
-            label: "Customers",
-            path: "/apps/ecommerce/customers",
-            active: true,
-          },
+          { label: "Tarifa", path: "/tarifa", active: true },
         ]}
         title={"Tarifa"}
       />
@@ -156,25 +151,6 @@ const Customers = () => {
         <Col>
           <Card>
             <Card.Body>
-              <Row>
-                <Col sm={4}>
-                  <Button className="btn btn-danger mb-2">
-                    <i className="mdi mdi-plus-circle me-2"></i> Add Customer
-                  </Button>
-                </Col>
-
-                <Col sm={8}>
-                  <div className="text-sm-end">
-                    <Button className="btn btn-success mb-2 me-1">
-                      <i className="mdi mdi-cog-outline"></i>
-                    </Button>
-
-                    <Button className="btn btn-light mb-2 me-1">Import</Button>
-
-                    <Button className="btn btn-light mb-2">Export</Button>
-                  </div>
-                </Col>
-              </Row>
               <Container>
                 <VerticalForm formClass="row" onSubmit={filtrar} resolver={schemaResolver}>
                   <FormInput
@@ -222,4 +198,4 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default Tarifa;
