@@ -145,7 +145,7 @@ const Table = (props: TableProps) => {
       data: props["data"],
       initialState: { pageIndex: 0, pageSize: props["pageSize"] || 10 },
       manualPagination: props["manualPagination"] || false,
-      pageCount: props["totalPages"],
+      pageCount: props["manualPagination"] ? props["totalPages"] : Math.ceil(props.data.length / props["pageSize"]),
       manualSortBy: props["manualSortBy"] || false,
       disableMultiSort: true,
     },

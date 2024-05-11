@@ -10,7 +10,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { PaginateResponse } from "../../base/paginate.response";
 import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
-import { IGetPaginateProductoRequest } from "../../requests/tarifa/get-paginate-producto.request";
+import { IGetPaginateProductoRequest } from "../../requests/producto/get-paginate-producto.request";
 import { GetPaginateTarifaRequest } from "../../requests/tarifa/get-paginate-tarifa.request";
 import { getPaginateProducto } from "../../redux/producto/actions";
 
