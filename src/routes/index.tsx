@@ -10,8 +10,12 @@ import PrivateRoute from "./PrivateRoute";
 // Tarifa
 const Tarifa = React.lazy(() => import("../views/tarifa/Tarifa"));
 
-// MateriaPrima
+// Materia Prima
 const MateriaPrima = React.lazy(() => import("../views/materia-prima/MateriaPrima"));
+
+// Producto
+const Producto = React.lazy(() => import("../views/producto/Producto"));
+const DetalleProducto = React.lazy(() => import("../views/producto/DetalleProducto"));
 
 // auth
 const Login = React.lazy(() => import("../pages/auth/Login"));
@@ -276,6 +280,24 @@ const MateriaPrimaRoutes: RoutesProps = {
   icon: "calendar",
   element: <MateriaPrima/>,
   header: "MateriaPrima",
+};
+
+const ProductoRoutes: RoutesProps = {
+  path: "/producto",
+  name: "Producto",
+  route: PrivateRoute,
+  roles: ["Admin"],
+  icon: "calendar",
+  element: <Producto/>,
+  header: "Producto",
+  children: [
+    {
+      path: "/producto/detalle",
+      name: "Detalle Producto",
+      element: <DetalleProducto />,
+      route: PrivateRoute,
+    }
+  ]
 };
 
 const calendarAppRoutes: RoutesProps = {
@@ -566,6 +588,7 @@ const fileAppRoutes = {
 const appRoutes = [
   TarifaRoutes,
   MateriaPrimaRoutes,
+  ProductoRoutes,
   calendarAppRoutes,
   chatAppRoutes,
   ecommerceAppRoutes,

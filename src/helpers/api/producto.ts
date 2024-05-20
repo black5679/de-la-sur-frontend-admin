@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { IPaginateRequest } from "../../base/paginate.request";
 import { PaginateResponse } from "../../base/paginate.response";
+import { IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
 import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
 import { APICore } from "./apiCore";
 
@@ -12,4 +13,9 @@ async function getPaginateProducto(params: IPaginateRequest) : Promise<AxiosResp
   return response;
 }
 
-export { getPaginateProducto };
+async function getByIdProducto(idProducto: number) : Promise<AxiosResponse<IGetByIdProductoResponse>> {
+  const response: AxiosResponse<IGetByIdProductoResponse> = await api.get(`${baseUrl}/${idProducto}`, null);
+  return response;
+}
+
+export { getPaginateProducto, getByIdProducto };

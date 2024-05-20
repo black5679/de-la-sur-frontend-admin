@@ -2,10 +2,13 @@
 import { ProductoActionTypes } from "./constants";
 import { PaginateResponse } from "../../base/paginate.response";
 import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
+import { GetByIdProductoResponse, IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
 
 const INIT_STATE : State = {
     loading: true,
-    productos: { results: [], totalRows : 0, totalPages: 0 }
+    loadingProducto: true,
+    productos: { results: [], totalRows : 0, totalPages: 0 },
+    producto: new GetByIdProductoResponse()
 };
 
 interface ProductoActionType {
@@ -13,9 +16,10 @@ interface ProductoActionType {
     | ProductoActionTypes.API_RESPONSE_SUCCESS
     | ProductoActionTypes.API_RESPONSE_ERROR
     | ProductoActionTypes.GETPAGINATE
+    | ProductoActionTypes.GETBYID
     payload: {
         actionType?: string;
-        data?: PaginateResponse<IGetProductoResponse> | {};
+        data?: any | {};
         token: string | null;
         error?: string;
     };
@@ -23,7 +27,9 @@ interface ProductoActionType {
 
 interface State {
     loading: boolean;
-    productos: PaginateResponse<IGetProductoResponse>
+    loadingProducto: boolean;
+    productos: PaginateResponse<IGetProductoResponse>;
+    producto: IGetByIdProductoResponse;
 }
 
 const Producto = (state: State = INIT_STATE, action: ProductoActionType): any => {
@@ -35,6 +41,13 @@ const Producto = (state: State = INIT_STATE, action: ProductoActionType): any =>
                         ...state,
                         loading: false,
                         productos: action.payload.data
+                    };
+                }
+                case ProductoActionTypes.GETBYID: {
+                    return {
+                        ...state,
+                        loadingProducto: false,
+                        producto: action.payload.data
                     };
                 }
                 default:
@@ -51,11 +64,21 @@ const Producto = (state: State = INIT_STATE, action: ProductoActionType): any =>
                         loading: false,
                     };
                 }
+                case ProductoActionTypes.GETBYID: {
+                    return {
+                        ...state,
+                        error: action.payload.error,
+                        producto: INIT_STATE.producto,
+                        loadingProducto: false,
+                    };
+                }
                 default:
                     return { ...state };
             }
         case ProductoActionTypes.GETPAGINATE:
             return { ...state, loading: true };
+        case ProductoActionTypes.GETBYID:
+                return { ...state, loadingProducto: true };
         default:
             return { ...state };
     }

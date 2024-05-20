@@ -3,7 +3,8 @@ import { SagaIterator } from "@redux-saga/core";
 
 // helpers
 import {
-    getPaginateProducto as getPaginateProductoApi
+    getPaginateProducto as getPaginateProductoApi,
+    getByIdProducto as getByIdProductoApi
 } from "../../helpers/";
 
 // actions
@@ -13,16 +14,16 @@ import { productoApiResponseSuccess, productoApiResponseError } from "./actions"
 import { ProductoActionTypes } from "./constants";
 import { AxiosResponse } from "axios";
 import { PaginateResponse } from "../../base/paginate.response";
-import { IPaginateRequest } from "../../base/paginate.request";
 import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
+import { IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
 
 interface UserData {
-    payload: IPaginateRequest,
+    payload: any,
     type: string;
 }
 
 /**
- * Lista las tarifas
+ * Lista los productos
  */
 function* getPaginateProducto(request : UserData): SagaIterator {
     try {
@@ -33,13 +34,29 @@ function* getPaginateProducto(request : UserData): SagaIterator {
     }
 }
 
+/**
+ * Obtiene el producto
+ */
+ function* getByIdProducto(request: UserData): SagaIterator {
+    try {
+        const response: AxiosResponse<IGetByIdProductoResponse> = yield call(getByIdProductoApi, request.payload.idProducto);
+        yield put(productoApiResponseSuccess(ProductoActionTypes.GETBYID, response.data));
+    } catch (error: any) {
+        yield put(productoApiResponseError(ProductoActionTypes.GETBYID, error));
+    }
+}
+
 export function* watchGetPaginateProducto() {
     yield takeEvery(ProductoActionTypes.GETPAGINATE, getPaginateProducto);
 }
 
+export function* watchGetByIdProducto() {
+    yield takeEvery(ProductoActionTypes.GETBYID, getByIdProducto);
+}
+
 function* productoSaga() {
     yield all([
-        fork(watchGetPaginateProducto)
+        fork(watchGetPaginateProducto), fork(watchGetByIdProducto)
     ]);
 }
 

@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Button } from "react-bootstrap";
-import classNames from "classnames";
 
 // components
 import PageTitle from "../../components/PageTitle";
@@ -13,44 +12,6 @@ import { IGetProductoResponse } from "../../responses/producto/get-producto.resp
 import { IGetPaginateProductoRequest } from "../../requests/producto/get-paginate-producto.request";
 import { GetPaginateTarifaRequest } from "../../requests/tarifa/get-paginate-tarifa.request";
 import { getPaginateProducto } from "../../redux/producto/actions";
-
-/* name column render */
-const NameColumn = ({ row }: { row: any }) => {
-    return (
-        <div className="table-user">
-            <img src={row.original.avatar} alt="" className="me-2 rounded-circle" />
-            <Link to="#" className="text-body fw-semibold">
-                {row.original.name}
-            </Link>
-        </div>
-    );
-};
-
-/* last order column render */
-const LastOrderColumn = ({ row }: { row: any }) => {
-    return (
-        <>
-            {row.original.last_order.date}{" "}
-            <small className="text-muted">{row.original.last_order.time}</small>
-        </>
-    );
-};
-
-/* status column render */
-const StatusColumn = ({ row }: { row: any }) => {
-    return (
-        <React.Fragment>
-            <span
-                className={classNames("badge", {
-                    "badge-soft-success": row.original.status === "Active",
-                    "badge-soft-danger": row.original.status === "Blocked",
-                })}
-            >
-                {row.original.status}
-            </span>
-        </React.Fragment>
-    );
-};
 
 /* action column render */
 const ActionColumn = () => {
@@ -75,41 +36,17 @@ const ActionColumn = () => {
 // columns to render
 const columns = [
     {
-        Header: "Customer",
-        accessor: "name",
-        sort: true,
-        Cell: NameColumn,
-        classes: "table-user",
+        Header: "Producto",
+        accessor: "nombre",
+        sort: true
     },
     {
-        Header: "Phone",
-        accessor: "phone",
+        Header: "Categoría",
+        accessor: "categoriaProducto",
         sort: true,
     },
     {
-        Header: "Balance",
-        accessor: "balance",
-        sort: true,
-    },
-    {
-        Header: "Orders",
-        accessor: "orders",
-        sort: true,
-    },
-    {
-        Header: "Last Order",
-        accessor: "last_order",
-        sort: true,
-        Cell: LastOrderColumn,
-    },
-    {
-        Header: "Status",
-        accessor: "status",
-        sort: true,
-        Cell: StatusColumn,
-    },
-    {
-        Header: "Action",
+        Header: "Acciones",
         accessor: "action",
         sort: false,
         Cell: ActionColumn,
@@ -119,13 +56,13 @@ const columns = [
 // main component
 const Producto = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const [request, setRequest] = useState<IGetPaginateProductoRequest>(new GetPaginateTarifaRequest());
+    const [request] = useState<IGetPaginateProductoRequest>(new GetPaginateTarifaRequest());
     // const [filter, setFilter] = useState<IFilter>({ materiales: "" });
 
     const { productos, loading }: { productos: PaginateResponse<IGetProductoResponse>, loading: boolean } = useSelector(
         (state: RootState) => ({
-            productos: state.Tarifa.productos,
-            loading: state.Tarifa.loading,
+            productos: state.Producto.productos,
+            loading: state.Producto.loading,
         })
     );
 
