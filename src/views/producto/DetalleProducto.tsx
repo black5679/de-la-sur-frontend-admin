@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Row, Col, Card, ProgressBar, Tab, Collapse } from "react-bootstrap";
+import { Row, Col, Card, ProgressBar, Tab, Accordion } from "react-bootstrap";
 import * as yup from "yup";
 
 // components
@@ -9,7 +9,7 @@ import Rating from "../../components/Rating";
 import { useQuery } from "../../hooks";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
+import { GetByIdEspacioProductoResponse, GetByIdProductoResponse, IGetByIdEspacioProductoResponse, IGetByIdMateriaPrimaEspacioProductoResponse, IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
 import { getByIdProducto } from "../../redux/actions";
 import { FormInput, VerticalForm } from "../../components";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -130,26 +130,64 @@ const Stocks = () => {
   );
 };
 
+interface IGetByIdProductoTempResponse extends IGetByIdProductoResponse{
+
+}
+
+class GetByIdProductoTempResponse extends GetByIdProductoResponse{
+  espaciosTmp: IGetByIdEspacioProductoTempResponse[];
+  constructor(producto: IGetByIdProductoResponse){
+    super();
+    this.espaciosTmp = producto.espacios;
+    if (this.espaciosTmp.length != 0){
+      this.espaciosTmp.forEach(espacio => {
+        if (espacio.materiasPrimasTmp.length != 0){
+          espacio.materiasPrimasTmp[0].selected = true;
+        }
+      })
+    }
+  }
+}
+
+interface IGetByIdEspacioProductoTempResponse extends IGetByIdEspacioProductoResponse{
+  materiasPrimasTmp: IGetByIdMateriaPrimaEspacioProductoTempResponse[];
+}
+
+class GetByIdEspacioProductoTempResponse extends GetByIdEspacioProductoResponse{
+  materiasPrimasTmp: IGetByIdMateriaPrimaEspacioProductoTempResponse[];
+  constructor(){
+    super();
+    this.materiasPrimasTmp = []
+  }
+}
+
+interface IGetByIdMateriaPrimaEspacioProductoTempResponse extends IGetByIdMateriaPrimaEspacioProductoResponse{
+  selected: boolean;
+}
+
 const DetalleProducto = () => {
   const dispatch = useDispatch<AppDispatch>();
   const query = useQuery();
-  const mode: string | null = query.get("mode");
+  const mode: string = query.get("mode") || "";
+  const idProducto: number = Number(query.get("idProducto"));
   const { producto, loadingProducto }: { producto: IGetByIdProductoResponse, loadingProducto: boolean } = useSelector(
     (state: RootState) => ({
       producto: state.Producto.producto,
       loadingProducto: state.Producto.loadingProducto,
     })
   );
-  const [collapse] = useState<boolean>(false);
-  useEffect(() => {
-    if (mode === Mode.Modificar || mode === Mode.Visualizar) {
-      getById(Number(query.get("idProducto")));
-    }
-  }, []);
+
+  const [productoTemp, setProductoTemp] = useState<IGetByIdProductoTempResponse>(producto);
 
   const getById = useCallback((idProducto: number) => {
     dispatch(getByIdProducto(idProducto))
   }, [dispatch]);
+
+  useEffect(() => {
+    if (mode === Mode.Modificar || mode === Mode.Visualizar) {
+      getById(Number(idProducto));
+    }
+  }, [getById, mode, idProducto]);
 
   const save = useCallback(() => {
 
@@ -211,87 +249,6 @@ const DetalleProducto = () => {
                     id="left-tabs-example"
                     defaultActiveKey="product-1-item"
                   >
-                    {/* <Tab.Content className="p-0">
-                      <Tab.Pane eventKey="product-1-item">
-                        <img
-                          src={productImg1}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="product-2-item">
-                        <img
-                          src={productImg2}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="product-3-item">
-                        <img
-                          src={productImg3}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="product-4-item">
-                        <img
-                          src={productImg4}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
-                    </Tab.Content> */}
-
-                    {/* <Nav variant="pills" as="ul" className="nav nav-justified">
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-1-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg1}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-2-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg2}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-3-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg3}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-4-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg4}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                    </Nav> */}
                   </Tab.Container>
                 </Col>
 
@@ -322,22 +279,28 @@ const DetalleProducto = () => {
                     </h4>
 
                     <p className="text-muted mb-4">{producto.descripcion}</p>
-                    <Collapse in={collapse}>
-                      <VerticalForm formClass="row" onSubmit={save} resolver={schemaResolver}>
-                        <FormInput
-                        label="Gema"
-                        type="radio"
-                        name="gema"
-                        containerClass={"col-12 mb-2"}
-                        />
-                        <FormInput
-                        label="Gema2"
-                        type="radio"
-                        name="gema"
-                        containerClass={"col-12 mb-2"}
-                        />
-                      </VerticalForm>
-                    </Collapse>
+                    <Accordion defaultActiveKey="0">
+                      {producto.espacios.map((espacio, index) => {
+                        return (
+                          <Accordion.Item eventKey={index.toString()} key={index.toString()}>
+                            <Accordion.Header>{espacio.tipoEspacio}</Accordion.Header>
+                            <Accordion.Body>
+                              <VerticalForm formClass="row" onSubmit={save} resolver={schemaResolver}>
+                                {espacio.materiasPrimas.map((materiaPrima, childIndex) => {
+                                  return (<FormInput
+                                    label={materiaPrima.materiaPrima}
+                                    type="radio"
+                                    name={childIndex.toString() + "_" + materiaPrima.idMateriaPrima + "_" + childIndex}
+                                    key={childIndex.toString() + "_" + materiaPrima.idMateriaPrima + "_" + childIndex}
+                                    containerClass={"col-12 mb-2"}
+                                  />
+                                  )
+                                })}
+                              </VerticalForm>
+                            </Accordion.Body>
+                          </Accordion.Item>)
+                      })}
+                    </Accordion>
                     <Row className="mb-3">
                       {(product.features || []).map((item, index) => {
                         return (
