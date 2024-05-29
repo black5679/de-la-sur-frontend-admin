@@ -38,5 +38,7 @@ export class GetByIdEspacioProductoResponse implements IGetByIdEspacioProductoRe
 
 export interface IGetByIdMateriaPrimaEspacioProductoResponse{
     idMateriaPrima: number,
-    materiaPrima: string
+    materiaPrima: string,
+    codigoHex: string,
+    selected: boolean
 }

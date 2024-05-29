@@ -130,41 +130,6 @@ const Stocks = () => {
   );
 };
 
-interface IGetByIdProductoTempResponse extends IGetByIdProductoResponse{
-
-}
-
-class GetByIdProductoTempResponse extends GetByIdProductoResponse{
-  espaciosTmp: IGetByIdEspacioProductoTempResponse[];
-  constructor(producto: IGetByIdProductoResponse){
-    super();
-    this.espaciosTmp = producto.espacios;
-    if (this.espaciosTmp.length != 0){
-      this.espaciosTmp.forEach(espacio => {
-        if (espacio.materiasPrimasTmp.length != 0){
-          espacio.materiasPrimasTmp[0].selected = true;
-        }
-      })
-    }
-  }
-}
-
-interface IGetByIdEspacioProductoTempResponse extends IGetByIdEspacioProductoResponse{
-  materiasPrimasTmp: IGetByIdMateriaPrimaEspacioProductoTempResponse[];
-}
-
-class GetByIdEspacioProductoTempResponse extends GetByIdEspacioProductoResponse{
-  materiasPrimasTmp: IGetByIdMateriaPrimaEspacioProductoTempResponse[];
-  constructor(){
-    super();
-    this.materiasPrimasTmp = []
-  }
-}
-
-interface IGetByIdMateriaPrimaEspacioProductoTempResponse extends IGetByIdMateriaPrimaEspacioProductoResponse{
-  selected: boolean;
-}
-
 const DetalleProducto = () => {
   const dispatch = useDispatch<AppDispatch>();
   const query = useQuery();
@@ -176,8 +141,6 @@ const DetalleProducto = () => {
       loadingProducto: state.Producto.loadingProducto,
     })
   );
-
-  const [productoTemp, setProductoTemp] = useState<IGetByIdProductoTempResponse>(producto);
 
   const getById = useCallback((idProducto: number) => {
     dispatch(getByIdProducto(idProducto))
@@ -290,6 +253,8 @@ const DetalleProducto = () => {
                                   return (<FormInput
                                     label={materiaPrima.materiaPrima}
                                     type="radio"
+                                    checked={materiaPrima.selected}
+                                    value={materiaPrima.codigoHex}
                                     name={childIndex.toString() + "_" + materiaPrima.idMateriaPrima + "_" + childIndex}
                                     key={childIndex.toString() + "_" + materiaPrima.idMateriaPrima + "_" + childIndex}
                                     containerClass={"col-12 mb-2"}

@@ -40,6 +40,9 @@ function* getPaginateProducto(request : UserData): SagaIterator {
  function* getByIdProducto(request: UserData): SagaIterator {
     try {
         const response: AxiosResponse<IGetByIdProductoResponse> = yield call(getByIdProductoApi, request.payload.idProducto);
+        response.data.espacios.forEach(espacio => {
+            espacio.materiasPrimas[0].selected = true;
+          })
         yield put(productoApiResponseSuccess(ProductoActionTypes.GETBYID, response.data));
     } catch (error: any) {
         yield put(productoApiResponseError(ProductoActionTypes.GETBYID, error));
