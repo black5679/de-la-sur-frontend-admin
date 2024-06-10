@@ -8,6 +8,7 @@ export interface ProductoActionType {
     | ProductoActionTypes.API_RESPONSE_ERROR
     | ProductoActionTypes.GETPAGINATE
     | ProductoActionTypes.GETBYID
+    | ProductoActionTypes.GETIMAGE
     payload: {} | string;
 }
 
@@ -36,4 +37,9 @@ export const getPaginateProducto = (request: IPaginateRequest): ProductoActionTy
 export const getByIdProducto = (idProducto: number): ProductoActionType => ({
     type: ProductoActionTypes.GETBYID,
     payload: { idProducto }
+});
+
+export const getImageProducto = (container: string, path: string): ProductoActionType => ({
+    type: ProductoActionTypes.GETIMAGE,
+    payload: { container, path }
 });

@@ -9,8 +9,8 @@ import Rating from "../../components/Rating";
 import { useQuery } from "../../hooks";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { GetByIdEspacioProductoResponse, GetByIdProductoResponse, IGetByIdEspacioProductoResponse, IGetByIdMateriaPrimaEspacioProductoResponse, IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
-import { getByIdProducto } from "../../redux/actions";
+import { IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
+import { getByIdProducto, getImageProducto } from "../../redux/actions";
 import { FormInput, VerticalForm } from "../../components";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -142,8 +142,9 @@ const DetalleProducto = () => {
     })
   );
 
-  const getById = useCallback((idProducto: number) => {
-    dispatch(getByIdProducto(idProducto))
+  const getById = useCallback(async (idProducto: number) => {
+    await dispatch(getByIdProducto(idProducto))
+    dispatch(getImageProducto("modelo", `30/imagen/F01320,F01320,D6D6D6.jpg`))
   }, [dispatch]);
 
   useEffect(() => {

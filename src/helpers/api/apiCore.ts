@@ -71,7 +71,7 @@ class APICore {
       let queryString = params
         ? Object.keys(params)
             .filter(key => typeof params[key] === 'boolean' ? (params[key] !== null && params[key] !== undefined) : params[key] )
-            .map((key) => key + "=" + params[key])
+            .map((key) => `${key}=${params[key]}`)
             .join("&")
         : "";
       response = axios.get(`${url}?${queryString}`, params);

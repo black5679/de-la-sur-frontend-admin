@@ -4,10 +4,10 @@ import { PaginateResponse } from "../../base/paginate.response";
 import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
 import { GetByIdProductoResponse, IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
 
-const INIT_STATE : State = {
+const INIT_STATE: State = {
     loading: true,
     loadingProducto: true,
-    productos: { results: [], totalRows : 0, totalPages: 0 },
+    productos: { results: [], totalRows: 0, totalPages: 0 },
     producto: new GetByIdProductoResponse()
 };
 
@@ -17,6 +17,7 @@ interface ProductoActionType {
     | ProductoActionTypes.API_RESPONSE_ERROR
     | ProductoActionTypes.GETPAGINATE
     | ProductoActionTypes.GETBYID
+    | ProductoActionTypes.GETIMAGE
     payload: {
         actionType?: string;
         data?: any | {};
@@ -50,6 +51,12 @@ const Producto = (state: State = INIT_STATE, action: ProductoActionType): any =>
                         producto: action.payload.data
                     };
                 }
+                case ProductoActionTypes.GETIMAGE: {
+                    return {
+                        ...state,
+                        producto: { ...state.producto, imagenes: action.payload.data }
+                    };
+                }
                 default:
                     return { ...state };
             }
@@ -72,13 +79,22 @@ const Producto = (state: State = INIT_STATE, action: ProductoActionType): any =>
                         loadingProducto: false,
                     };
                 }
+                case ProductoActionTypes.GETIMAGE: {
+                    return {
+                        ...state,
+                        error: action.payload.error,
+                        producto: INIT_STATE.producto.imagenes,
+                    };
+                }
                 default:
                     return { ...state };
             }
         case ProductoActionTypes.GETPAGINATE:
             return { ...state, loading: true };
         case ProductoActionTypes.GETBYID:
-                return { ...state, loadingProducto: true };
+            return { ...state, loadingProducto: true };
+        case ProductoActionTypes.GETIMAGE:
+            return { ...state };
         default:
             return { ...state };
     }

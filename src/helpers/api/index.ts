@@ -4,5 +4,6 @@ import { getPaginateProducto, getByIdProducto } from "./producto"
 import { getMaterial } from "./material"
 import { getMateriaPrima } from "./materia-prima"
 import { getPaginateCompra } from "./compra";
+import { getFile } from "./storage"
 
-export { login, logout, signup, forgotPassword, getPaginateTarifa, getMaterial, getPaginateProducto, getByIdProducto, getMateriaPrima, getPaginateCompra };
+export { login, logout, signup, forgotPassword, getPaginateTarifa, getMaterial, getPaginateProducto, getByIdProducto, getMateriaPrima, getPaginateCompra, getFile };

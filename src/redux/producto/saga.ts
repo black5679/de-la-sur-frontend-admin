@@ -4,7 +4,8 @@ import { SagaIterator } from "@redux-saga/core";
 // helpers
 import {
     getPaginateProducto as getPaginateProductoApi,
-    getByIdProducto as getByIdProductoApi
+    getByIdProducto as getByIdProductoApi,
+    getFile as getFileApi
 } from "../../helpers/";
 
 // actions
@@ -16,6 +17,7 @@ import { AxiosResponse } from "axios";
 import { PaginateResponse } from "../../base/paginate.response";
 import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
 import { IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
+import { IBlobResponse } from "../../base/blob.response";
 
 interface UserData {
     payload: any,
@@ -49,6 +51,15 @@ function* getPaginateProducto(request : UserData): SagaIterator {
     }
 }
 
+function* getImageProducto(request: UserData): SagaIterator{
+    try {
+        const response: AxiosResponse<IBlobResponse> = yield call(getFileApi, request.payload.container, request.payload.path);
+        yield put(productoApiResponseSuccess(ProductoActionTypes.GETIMAGE, response.data));
+    } catch (error: any) {
+        yield put(productoApiResponseError(ProductoActionTypes.GETIMAGE, error));
+    }
+}
+
 export function* watchGetPaginateProducto() {
     yield takeEvery(ProductoActionTypes.GETPAGINATE, getPaginateProducto);
 }
@@ -57,9 +68,13 @@ export function* watchGetByIdProducto() {
     yield takeEvery(ProductoActionTypes.GETBYID, getByIdProducto);
 }
 
+export function* watchGetImageProducto() {
+    yield takeEvery(ProductoActionTypes.GETIMAGE, getImageProducto);
+}
+
 function* productoSaga() {
     yield all([
-        fork(watchGetPaginateProducto), fork(watchGetByIdProducto)
+        fork(watchGetPaginateProducto), fork(watchGetByIdProducto), fork(watchGetImageProducto)
     ]);
 }
 

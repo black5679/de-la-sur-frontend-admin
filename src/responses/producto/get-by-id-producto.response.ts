@@ -3,7 +3,8 @@ export interface IGetByIdProductoResponse{
     nombre: string,
     descripcion?: string,
     idCategoriaProducto?: number,
-    espacios: IGetByIdEspacioProductoResponse[]
+    espacios: IGetByIdEspacioProductoResponse[],
+    imagenes: string[]
 }
 
 export class GetByIdProductoResponse implements IGetByIdProductoResponse{
@@ -12,10 +13,12 @@ export class GetByIdProductoResponse implements IGetByIdProductoResponse{
     descripcion?: string;
     idCategoriaProducto?: number;
     espacios: IGetByIdEspacioProductoResponse[];
+    imagenes: string[];
     constructor(){
         this.nombre = "";
         this.descripcion = "";
         this.espacios = [];
+        this.imagenes = [];
     }
 }
 
