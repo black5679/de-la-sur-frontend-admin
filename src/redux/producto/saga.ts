@@ -45,6 +45,9 @@ function* getPaginateProducto(request : UserData): SagaIterator {
         response.data.espacios.forEach(espacio => {
             espacio.materiasPrimas[0].selected = true;
           })
+        const imageResponse: AxiosResponse<IBlobResponse> = yield call(getFileApi, "modelo", "30/imagen/F01320,F01320,D6D6D6.jpg");
+        response.data.imagenes.push(imageResponse.data.imageUrl);
+        console.log(imageResponse)
         yield put(productoApiResponseSuccess(ProductoActionTypes.GETBYID, response.data));
     } catch (error: any) {
         yield put(productoApiResponseError(ProductoActionTypes.GETBYID, error));
@@ -74,7 +77,8 @@ export function* watchGetImageProducto() {
 
 function* productoSaga() {
     yield all([
-        fork(watchGetPaginateProducto), fork(watchGetByIdProducto), fork(watchGetImageProducto)
+        fork(watchGetPaginateProducto), fork(watchGetByIdProducto),
+        //  fork(watchGetImageProducto)
     ]);
 }
 

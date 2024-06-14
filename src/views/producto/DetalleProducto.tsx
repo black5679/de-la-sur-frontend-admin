@@ -141,10 +141,9 @@ const DetalleProducto = () => {
       loadingProducto: state.Producto.loadingProducto,
     })
   );
-
-  const getById = useCallback(async (idProducto: number) => {
-    await dispatch(getByIdProducto(idProducto))
-    dispatch(getImageProducto("modelo", `30/imagen/F01320,F01320,D6D6D6.jpg`))
+console.log(producto)
+  const getById = useCallback((idProducto: number) => {
+    dispatch(getByIdProducto(idProducto))
   }, [dispatch]);
 
   useEffect(() => {
@@ -209,10 +208,93 @@ const DetalleProducto = () => {
             <Card.Body>
               <Row>
                 <Col lg={5}>
-                  <Tab.Container
+                <Tab.Container
                     id="left-tabs-example"
                     defaultActiveKey="product-1-item"
                   >
+                    <Tab.Content className="p-0">^
+                      {producto.imagenes.map(imagen => {
+                        <Tab.Pane eventKey="product-1-item">
+                        <img
+                          src={imagen}
+                          alt=""
+                          className="img-fluid mx-auto d-block rounded"
+                        />
+                      </Tab.Pane>
+                      })}
+                      {/* <Tab.Pane eventKey="product-2-item">
+                        <img
+                          src={productImg2}
+                          alt=""
+                          className="img-fluid mx-auto d-block rounded"
+                        />
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="product-3-item">
+                        <img
+                          src={productImg3}
+                          alt=""
+                          className="img-fluid mx-auto d-block rounded"
+                        />
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="product-4-item">
+                        <img
+                          src={productImg4}
+                          alt=""
+                          className="img-fluid mx-auto d-block rounded"
+                        />
+                      </Tab.Pane> */}
+                    </Tab.Content>
+
+                    {/* <Nav variant="pills" as="ul" className="nav nav-justified">
+                      <Nav.Item as="li">
+                        <Nav.Link
+                          eventKey="product-1-item"
+                          className="product-thumb cursor-pointer"
+                        >
+                          <img
+                            src={productImg1}
+                            alt=""
+                            className="img-fluid mx-auto d-block rounded"
+                          />
+                        </Nav.Link>
+                      </Nav.Item>
+                      <Nav.Item as="li">
+                        <Nav.Link
+                          eventKey="product-2-item"
+                          className="product-thumb cursor-pointer"
+                        >
+                          <img
+                            src={productImg2}
+                            alt=""
+                            className="img-fluid mx-auto d-block rounded"
+                          />
+                        </Nav.Link>
+                      </Nav.Item>
+                      <Nav.Item as="li">
+                        <Nav.Link
+                          eventKey="product-3-item"
+                          className="product-thumb cursor-pointer"
+                        >
+                          <img
+                            src={productImg3}
+                            alt=""
+                            className="img-fluid mx-auto d-block rounded"
+                          />
+                        </Nav.Link>
+                      </Nav.Item>
+                      <Nav.Item as="li">
+                        <Nav.Link
+                          eventKey="product-4-item"
+                          className="product-thumb cursor-pointer"
+                        >
+                          <img
+                            src={productImg4}
+                            alt=""
+                            className="img-fluid mx-auto d-block rounded"
+                          />
+                        </Nav.Link>
+                      </Nav.Item>
+                    </Nav> */}
                   </Tab.Container>
                 </Col>
 
