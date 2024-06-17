@@ -141,7 +141,7 @@ const DetalleProducto = () => {
       loadingProducto: state.Producto.loadingProducto,
     })
   );
-console.log(producto)
+  const [productoTmp, setProductoTmp] = useState<IGetByIdProductoResponse>(producto);
   const getById = useCallback((idProducto: number) => {
     dispatch(getByIdProducto(idProducto))
   }, [dispatch]);
@@ -154,8 +154,28 @@ console.log(producto)
 
   const save = useCallback(() => {
 
-  }, [])
+  }, []);
 
+  const getImage = useCallback((idMateriaPrima: number, idTipoEspacio: number) => () => {
+    let colores: string[] = [];
+    producto.espacios.forEach(espacio => {
+      espacio.materiasPrimas.forEach(materiaPrima => {
+        if (espacio.idTipoEspacio === idTipoEspacio) {
+          if (materiaPrima.idMateriaPrima !== idMateriaPrima) materiaPrima.selected = false;
+          else {
+            materiaPrima.selected = true;
+            colores.push(materiaPrima.codigoHex);
+          }
+        }
+        else {
+          if (materiaPrima.selected){
+            colores.push(materiaPrima.codigoHex);
+          }
+        }
+      })
+    })
+    dispatch(getImageProducto("modelo", producto.idMaterial + "/imagen/" + colores.join(",") + ".jpg"));
+  }, [dispatch, producto]);
   const [product] = useState<Product>({
     brand: "Jack & Jones",
     name: "Jack & Jones Men's T-shirt (Blue)",
@@ -208,41 +228,18 @@ console.log(producto)
             <Card.Body>
               <Row>
                 <Col lg={5}>
-                <Tab.Container
+                  <Tab.Container
                     id="left-tabs-example"
-                    defaultActiveKey="product-1-item"
+                    defaultActiveKey="producto_0_imagen"
                   >
-                    <Tab.Content className="p-0">^
-                      {producto.imagenes.map(imagen => {
-                        <Tab.Pane eventKey="product-1-item">
-                        <img
-                          src={imagen}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
+                    <Tab.Content className="p-0">
+                      {producto.imagenes.map((imagen, index) => {
+                        return (
+                        <Tab.Pane eventKey={`producto_${index}_imagen`} key={index.toString()}>
+                          <img src={imagen} alt="imagen" className="img-fluid mx-auto d-block rounded"
+                          />
+                        </Tab.Pane>)
                       })}
-                      {/* <Tab.Pane eventKey="product-2-item">
-                        <img
-                          src={productImg2}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="product-3-item">
-                        <img
-                          src={productImg3}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="product-4-item">
-                        <img
-                          src={productImg4}
-                          alt=""
-                          className="img-fluid mx-auto d-block rounded"
-                        />
-                      </Tab.Pane> */}
                     </Tab.Content>
 
                     {/* <Nav variant="pills" as="ul" className="nav nav-justified">
@@ -326,20 +323,21 @@ console.log(producto)
 
                     <p className="text-muted mb-4">{producto.descripcion}</p>
                     <Accordion defaultActiveKey="0">
-                      {producto.espacios.map((espacio, index) => {
+                      {producto.espacios.map(espacio => {
                         return (
-                          <Accordion.Item eventKey={index.toString()} key={index.toString()}>
+                          <Accordion.Item eventKey={espacio.idTipoEspacio.toString()} key={espacio.idTipoEspacio}>
                             <Accordion.Header>{espacio.tipoEspacio}</Accordion.Header>
                             <Accordion.Body>
                               <VerticalForm formClass="row" onSubmit={save} resolver={schemaResolver}>
-                                {espacio.materiasPrimas.map((materiaPrima, childIndex) => {
+                                {espacio.materiasPrimas.map(materiaPrima => {
                                   return (<FormInput
                                     label={materiaPrima.materiaPrima}
                                     type="radio"
-                                    checked={materiaPrima.selected}
-                                    value={materiaPrima.codigoHex}
-                                    name={childIndex.toString() + "_" + materiaPrima.idMateriaPrima + "_" + childIndex}
-                                    key={childIndex.toString() + "_" + materiaPrima.idMateriaPrima + "_" + childIndex}
+                                    checked={materiaPrima.selected || false}
+                                    value={materiaPrima.idMateriaPrima}
+                                    name={materiaPrima.idMateriaPrima + "_" + espacio.idTipoEspacio}
+                                    key={materiaPrima.idMateriaPrima + "_" + espacio.idTipoEspacio}
+                                    onChange={getImage(materiaPrima.idMateriaPrima, espacio.idTipoEspacio)}
                                     containerClass={"col-12 mb-2"}
                                   />
                                   )

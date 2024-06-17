@@ -52,7 +52,6 @@ const Producto = (state: State = INIT_STATE, action: ProductoActionType): any =>
                     };
                 }
                 case ProductoActionTypes.GETIMAGE: {
-                    console.log(action.payload.data)
                     return {
                         ...state,
                         producto: { ...state.producto, imagenes: action.payload.data }

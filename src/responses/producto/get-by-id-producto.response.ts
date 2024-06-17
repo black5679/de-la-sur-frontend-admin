@@ -1,5 +1,6 @@
 export interface IGetByIdProductoResponse{
     idProducto?: number,
+    idMaterial?: number,
     nombre: string,
     descripcion?: string,
     idCategoriaProducto?: number,

@@ -42,12 +42,14 @@ function* getPaginateProducto(request : UserData): SagaIterator {
  function* getByIdProducto(request: UserData): SagaIterator {
     try {
         const response: AxiosResponse<IGetByIdProductoResponse> = yield call(getByIdProductoApi, request.payload.idProducto);
+        let image: string[] = [];
         response.data.espacios.forEach(espacio => {
             espacio.materiasPrimas[0].selected = true;
+            image.push(espacio.materiasPrimas[0].codigoHex);
           })
-        const imageResponse: AxiosResponse<IBlobResponse> = yield call(getFileApi, "modelo", "30/imagen/F01320,F01320,D6D6D6.jpg");
+        const imageResponse: AxiosResponse<IBlobResponse> = yield call(getFileApi, "modelo", response.data.idMaterial + "/imagen/"+ image.join(",")+".jpg");
+        response.data.imagenes = [];
         response.data.imagenes.push(imageResponse.data.imageUrl);
-        console.log(imageResponse)
         yield put(productoApiResponseSuccess(ProductoActionTypes.GETBYID, response.data));
     } catch (error: any) {
         yield put(productoApiResponseError(ProductoActionTypes.GETBYID, error));
@@ -57,7 +59,9 @@ function* getPaginateProducto(request : UserData): SagaIterator {
 function* getImageProducto(request: UserData): SagaIterator{
     try {
         const response: AxiosResponse<IBlobResponse> = yield call(getFileApi, request.payload.container, request.payload.path);
-        yield put(productoApiResponseSuccess(ProductoActionTypes.GETIMAGE, response.data));
+        let imagenes : string[] = [];
+        imagenes.push(response.data.imageUrl);
+        yield put(productoApiResponseSuccess(ProductoActionTypes.GETIMAGE, imagenes));
     } catch (error: any) {
         yield put(productoApiResponseError(ProductoActionTypes.GETIMAGE, error));
     }
@@ -78,7 +82,7 @@ export function* watchGetImageProducto() {
 function* productoSaga() {
     yield all([
         fork(watchGetPaginateProducto), fork(watchGetByIdProducto),
-        //  fork(watchGetImageProducto)
+         fork(watchGetImageProducto)
     ]);
 }
 
