@@ -1,11 +1,12 @@
+import config from "../../config";
 import { APICore } from "./apiCore";
 
 const api = new APICore();
+const baseURL = config.LOGIN_API_URL;
 
 // account
-function login(params: { correo: string; password: string }) {
-  const baseUrl = "usuario/logindashboard";
-  return api.create(`${baseUrl}`, params);
+function login(params: { username: string; password: string }) {
+  return api.create(baseURL + "auth", params);
 }
 
 function logout() {
@@ -18,7 +19,7 @@ function signup(params: { fullname: string; email: string; password: string }) {
   return api.create(`${baseUrl}`, params);
 }
 
-function forgotPassword(params: { correo: string }) {
+function forgotPassword(params: { username: string }) {
   const baseUrl = "forget-password/";
   return api.create(`${baseUrl}`, params);
 }

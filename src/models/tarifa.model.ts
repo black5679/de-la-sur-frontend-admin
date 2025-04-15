@@ -1,5 +1,5 @@
-export interface TarifaModel{
-    id: number,
+export interface ITarifaModel{
+    idTarifa: number,
     idFuente: number,
     idMateriaPrima: number,
     idPureza: number,

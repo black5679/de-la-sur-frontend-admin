@@ -7,6 +7,7 @@ import Material from "./material/reducers";
 import Producto from "./producto/reducers";
 import MateriaPrima from "./materia-prima/reducers";
 import Compra from "./compra/reducers";
+import Color from "./color/reducers";
 
 export default combineReducers({
   Auth,
@@ -15,5 +16,6 @@ export default combineReducers({
   Material,
   Producto,
   MateriaPrima,
-  Compra
+  Compra,
+  Color
 });

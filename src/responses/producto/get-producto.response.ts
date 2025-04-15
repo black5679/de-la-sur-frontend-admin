@@ -1,7 +1,6 @@
-export interface IGetProductoResponse{
-    idMaterial: number,
-    idProducto: number,
-    idCategoriaProducto: number,
-    categoriaProducto: string,
-    nombre: string
+export interface IGetProductResponse{
+    id: string,
+    code: string,
+    name: string,
+    productTypeName: string
 }

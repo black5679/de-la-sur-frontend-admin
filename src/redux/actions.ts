@@ -5,3 +5,4 @@ export * from "./material/actions";
 export * from "./producto/actions";
 export * from "./materia-prima/actions";
 export * from "./compra/actions";
+export * from "./color/actions";

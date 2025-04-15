@@ -7,7 +7,8 @@ import materialSaga from "./material/saga";
 import productoSaga from "./producto/saga";
 import materiaPrimaSaga from "./materia-prima/saga";
 import compraSaga from "./compra/saga";
+import colorSaga from "./color/saga";
 
 export default function* rootSaga() {
-  yield all([authSaga(), layoutSaga(), tarifaSaga(), materialSaga(), productoSaga(), materiaPrimaSaga(), compraSaga()]);
+  yield all([authSaga(), layoutSaga(), tarifaSaga(), materialSaga(), productoSaga(), materiaPrimaSaga(), compraSaga(), colorSaga()]);
 }

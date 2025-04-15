@@ -3,8 +3,8 @@ export interface IPaginateRequest{
     pageSize: number;
     orderType: boolean;
     orderBy?: string;
-    desde?: string;
-    hasta?: string;
+    initialDate?: string;
+    endDate?: string;
 }
 
 export class PaginateRequest implements IPaginateRequest{

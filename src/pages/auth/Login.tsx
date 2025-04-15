@@ -94,9 +94,9 @@ const Login = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { token, userLoggedIn, loading, error } = useSelector(
+  const { userLoggedIn, loading, error, token } = useSelector(
     (state: RootState) => ({
-      token: state.Auth.token,
+      token: state.Auth.Token,
       loading: state.Auth.loading,
       error: state.Auth.error,
       userLoggedIn: state.Auth.userLoggedIn,
@@ -125,8 +125,6 @@ const Login = () => {
   };
 
   const location = useLocation();
-  //
-  // const redirectUrl = location.state && location.state.from ? location.state.from.pathname : '/';
   const redirectUrl = location?.search?.slice(6) || "/";
 
   return (

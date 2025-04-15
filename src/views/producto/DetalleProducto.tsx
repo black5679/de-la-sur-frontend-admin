@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, ProgressBar, Tab, Accordion } from "react-bootstrap";
-import * as yup from "yup";
 
 // components
 import PageTitle from "../../components/PageTitle";
@@ -9,10 +8,9 @@ import Rating from "../../components/Rating";
 import { useQuery } from "../../hooks";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { IGetByIdProductoResponse } from "../../responses/producto/get-by-id-producto.response";
+import { IGetByIdProductResponse } from "../../responses/producto/get-by-id-producto.response";
 import { getByIdProducto, getImageProducto } from "../../redux/actions";
-import { FormInput, VerticalForm } from "../../components";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { FormInput } from "../../components";
 
 interface Product {
   brand: string;
@@ -29,7 +27,7 @@ interface Product {
 enum Mode {
   Crear = "crear",
   Modificar = "modificar",
-  Visualizar = "visualizar"
+  Visualizar = "visualizar",
 }
 
 // Stock Table
@@ -134,48 +132,117 @@ const DetalleProducto = () => {
   const dispatch = useDispatch<AppDispatch>();
   const query = useQuery();
   const mode: string = query.get("mode") || "";
-  const idProducto: number = Number(query.get("idProducto"));
-  const { producto, loadingProducto }: { producto: IGetByIdProductoResponse, loadingProducto: boolean } = useSelector(
+  const id: string = query.get("id") ?? "";
+  const { producto }: { producto: IGetByIdProductResponse } = useSelector(
     (state: RootState) => ({
       producto: state.Producto.producto,
-      loadingProducto: state.Producto.loadingProducto,
     })
   );
-  const [productoTmp, setProductoTmp] = useState<IGetByIdProductoResponse>(producto);
-  const getById = useCallback((idProducto: number) => {
-    dispatch(getByIdProducto(idProducto))
-  }, [dispatch]);
+  const getById = useCallback(
+    (id: string) => {
+      dispatch(getByIdProducto(id));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (mode === Mode.Modificar || mode === Mode.Visualizar) {
-      getById(Number(idProducto));
+      getById(id);
     }
-  }, [getById, mode, idProducto]);
+  }, [getById, mode, id]);
 
-  const save = useCallback(() => {
-
-  }, []);
-
-  const getImage = useCallback((idMateriaPrima: number, idTipoEspacio: number) => () => {
-    let colores: string[] = [];
-    producto.espacios.forEach(espacio => {
-      espacio.materiasPrimas.forEach(materiaPrima => {
-        if (espacio.idTipoEspacio === idTipoEspacio) {
-          if (materiaPrima.idMateriaPrima !== idMateriaPrima) materiaPrima.selected = false;
-          else {
-            materiaPrima.selected = true;
-            colores.push(materiaPrima.codigoHex);
+  const handleChangeGem = useCallback((
+    subcategoryCode: string,
+    categoryCode: string,
+    spaceTypeCode: string
+  ) => {
+    let colors: string[] = [];
+    producto.images = [];
+    producto.spaceGems.forEach((space) => {
+      if (space.spaceTypeCode === spaceTypeCode) {
+        space.gemCategories.forEach((gemCategory) => {
+          if (gemCategory.code === categoryCode) {
+            gemCategory.gemSubcategories.forEach((gemSubcategory) => {
+              if (gemSubcategory.code === subcategoryCode) {
+                gemSubcategory.selected = true;
+                colors.push(gemSubcategory.colorHex.replace("#", ""));
+              } else {
+                gemSubcategory.selected = false;
+              }
+            });
+          } else {
+            gemCategory.gemSubcategories.forEach((gemSubcategory) => {
+              gemSubcategory.selected = false;
+            });
           }
-        }
-        else {
-          if (materiaPrima.selected){
-            colores.push(materiaPrima.codigoHex);
+        });
+      } else {
+        space.gemCategories.forEach((gemCategory) => {
+          gemCategory.gemSubcategories.forEach((gemSubcategory) => {
+            if (gemSubcategory.selected) {
+              colors.push(gemSubcategory.colorHex.replace("#", ""));
+            }
+          });
+        });
+      }
+    });
+    producto.spaceMetals.forEach((space) => {
+      space.metalCategories.forEach((metalCategory) => {
+        metalCategory.metalSubcategories.forEach((metalSubcategory) => {
+          if (metalSubcategory.selected) {
+            colors.push(metalSubcategory.colorHex.replace("#", ""));
           }
-        }
-      })
-    })
-    dispatch(getImageProducto("modelo", producto.idMaterial + "/imagen/" + colores.join(",") + ".jpg"));
-  }, [dispatch, producto]);
+        });
+      });
+    });
+    dispatch(getImageProducto("model", `${producto.id}/image/${colors.join(",")}.jpg`));
+  },[producto, dispatch]);
+  const handleChangeMetal = useCallback((
+    subcategoryCode: string,
+    categoryCode: string,
+    spaceTypeCode: string
+  ) => {
+    let colors: string[] = [];
+    producto.images = [];
+    producto.spaceGems.forEach((space) => {
+      space.gemCategories.forEach((gemCategory) => {
+        gemCategory.gemSubcategories.forEach((gemSubcategory) => {
+          if (gemSubcategory.selected) {
+            colors.push(gemSubcategory.colorHex.replace("#", ""));
+          }
+        });
+      });
+    });
+    producto.spaceMetals.forEach((space) => {
+      if (space.spaceTypeCode === spaceTypeCode) {
+        space.metalCategories.forEach((metalCategory) => {
+          if (metalCategory.code === categoryCode) {
+            metalCategory.metalSubcategories.forEach((metalSubcategory) => {
+              if (metalSubcategory.code === subcategoryCode) {
+                metalSubcategory.selected = true;
+                colors.push(metalSubcategory.colorHex.replace("#", ""));
+              } else {
+                metalSubcategory.selected = false;
+              }
+            });
+          } else {
+            metalCategory.metalSubcategories.forEach((metalSubcategory) => {
+              metalSubcategory.selected = false;
+            });
+          }
+        });
+      } else {
+        space.metalCategories.forEach((metalCategory) => {
+          metalCategory.metalSubcategories.forEach((metalSubcategory) => {
+            if (metalSubcategory.selected) {
+              colors.push(metalSubcategory.colorHex.replace("#", ""));
+            }
+          });
+        });
+      }
+    });
+    dispatch(getImageProducto("model", `${producto.id}/image/${colors.join(",")}.jpg`))
+  },[producto, dispatch]);
   const [product] = useState<Product>({
     brand: "Jack & Jones",
     name: "Jack & Jones Men's T-shirt (Blue)",
@@ -199,25 +266,19 @@ const DetalleProducto = () => {
     Math.round(product.price - (product.price * product.discount) / 100)
   );
 
-  const schemaResolver = yupResolver(
-    yup.object({
-      materiales: yup.array().optional()
-    })
-  );
-
   return (
     <>
       <PageTitle
         breadCrumbItems={[
           {
             label: "Producto",
-            path: "/producto"
+            path: "/producto",
           },
           {
             label: "Detalle de Producto",
             path: "/producto/detalle",
             active: true,
-          }
+          },
         ]}
         title={"Detalle de Producto"}
       />
@@ -233,71 +294,27 @@ const DetalleProducto = () => {
                     defaultActiveKey="producto_0_imagen"
                   >
                     <Tab.Content className="p-0">
-                      {producto.imagenes.map((imagen, index) => {
+                      {producto.images.map((image, index) => {
                         return (
-                        <Tab.Pane eventKey={`producto_${index}_imagen`} key={index.toString()}>
-                          <img src={imagen} alt="imagen" className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Tab.Pane>)
+                          <Tab.Pane
+                            eventKey={`producto_${index}_imagen`}
+                            key={index.toString()}
+                          >
+                            <img
+                              src={image}
+                              alt="imagen"
+                              className="img-fluid mx-auto d-block rounded"
+                            />
+                          </Tab.Pane>
+                        );
                       })}
                     </Tab.Content>
-
-                    {/* <Nav variant="pills" as="ul" className="nav nav-justified">
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-1-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg1}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-2-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg2}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-3-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg3}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item as="li">
-                        <Nav.Link
-                          eventKey="product-4-item"
-                          className="product-thumb cursor-pointer"
-                        >
-                          <img
-                            src={productImg4}
-                            alt=""
-                            className="img-fluid mx-auto d-block rounded"
-                          />
-                        </Nav.Link>
-                      </Nav.Item>
-                    </Nav> */}
                   </Tab.Container>
                 </Col>
 
                 <Col lg={7}>
                   <div className="ps-xl-3 mt-3 mt-xl-0">
-                    <h4 className="mb-3"> {producto.nombre}</h4>
+                    <h4 className="mb-3"> {producto.name}</h4>
                     <Rating value={product.rating} />
                     <p className="mb-4">
                       <Link to="#" className="text-muted">
@@ -321,30 +338,136 @@ const DetalleProducto = () => {
                       </span>
                     </h4>
 
-                    <p className="text-muted mb-4">{producto.descripcion}</p>
+                    <p className="text-muted mb-4">{producto.name}</p>
                     <Accordion defaultActiveKey="0">
-                      {producto.espacios.map(espacio => {
+                      {producto.spaceGems.map((spaceGem) => {
                         return (
-                          <Accordion.Item eventKey={espacio.idTipoEspacio.toString()} key={espacio.idTipoEspacio}>
-                            <Accordion.Header>{espacio.tipoEspacio}</Accordion.Header>
+                          <Accordion.Item
+                            eventKey={spaceGem.spaceTypeCode.toString()}
+                            key={spaceGem.spaceTypeCode}
+                          >
+                            <Accordion.Header>{spaceGem.name}</Accordion.Header>
                             <Accordion.Body>
-                              <VerticalForm formClass="row" onSubmit={save} resolver={schemaResolver}>
-                                {espacio.materiasPrimas.map(materiaPrima => {
-                                  return (<FormInput
-                                    label={materiaPrima.materiaPrima}
-                                    type="radio"
-                                    checked={materiaPrima.selected || false}
-                                    value={materiaPrima.idMateriaPrima}
-                                    name={materiaPrima.idMateriaPrima + "_" + espacio.idTipoEspacio}
-                                    key={materiaPrima.idMateriaPrima + "_" + espacio.idTipoEspacio}
-                                    onChange={getImage(materiaPrima.idMateriaPrima, espacio.idTipoEspacio)}
-                                    containerClass={"col-12 mb-2"}
-                                  />
-                                  )
-                                })}
-                              </VerticalForm>
+                              {spaceGem.gemCategories.map((gemCategory) => {
+                                return (
+                                  <Accordion
+                                    defaultActiveKey="0"
+                                    key={gemCategory.code}
+                                  >
+                                    <Accordion.Item
+                                      eventKey={spaceGem.spaceTypeCode.toString()}
+                                      key={spaceGem.spaceTypeCode}
+                                    ></Accordion.Item>
+                                    <Accordion.Header>
+                                      {gemCategory.name}
+                                    </Accordion.Header>
+                                    <Accordion.Body>
+                                      {gemCategory.gemSubcategories.map(
+                                        (gemSubcategory) => {
+                                          return (
+                                            <FormInput
+                                              label={gemSubcategory.name}
+                                              type="radio"
+                                              checked={
+                                                gemSubcategory.selected || false
+                                              }
+                                              value={gemSubcategory.code}
+                                              name={
+                                                gemSubcategory.code +
+                                                "_" +
+                                                spaceGem.spaceTypeCode
+                                              }
+                                              key={
+                                                gemSubcategory.code +
+                                                "_" +
+                                                spaceGem.spaceTypeCode
+                                              }
+                                              onChange={() =>
+                                                handleChangeGem(
+                                                  gemSubcategory.code,
+                                                  gemCategory.code,
+                                                  spaceGem.spaceTypeCode
+                                                )
+                                              }
+                                              containerClass={"col-12 mb-2"}
+                                            />
+                                          );
+                                        }
+                                      )}
+                                    </Accordion.Body>
+                                  </Accordion>
+                                );
+                              })}
                             </Accordion.Body>
-                          </Accordion.Item>)
+                          </Accordion.Item>
+                        );
+                      })}
+                      {producto.spaceMetals.map((spaceMetal) => {
+                        return (
+                          <Accordion.Item
+                            eventKey={spaceMetal.spaceTypeCode.toString()}
+                            key={spaceMetal.spaceTypeCode}
+                          >
+                            <Accordion.Header>
+                              {spaceMetal.name}
+                            </Accordion.Header>
+                            <Accordion.Body>
+                              {spaceMetal.metalCategories.map(
+                                (metalCategory) => {
+                                  return (
+                                    <Accordion
+                                      defaultActiveKey="0"
+                                      key={metalCategory.code}
+                                    >
+                                      <Accordion.Item
+                                        eventKey={spaceMetal.spaceTypeCode.toString()}
+                                        key={spaceMetal.spaceTypeCode}
+                                      ></Accordion.Item>
+                                      <Accordion.Header>
+                                        {metalCategory.name}
+                                      </Accordion.Header>
+                                      <Accordion.Body>
+                                        {metalCategory.metalSubcategories.map(
+                                          (metalSubcategory) => {
+                                            return (
+                                              <FormInput
+                                                label={metalSubcategory.name}
+                                                type="radio"
+                                                checked={
+                                                  metalSubcategory.selected ||
+                                                  false
+                                                }
+                                                value={metalSubcategory.code}
+                                                name={
+                                                  metalSubcategory.code +
+                                                  "_" +
+                                                  spaceMetal.spaceTypeCode
+                                                }
+                                                key={
+                                                  metalSubcategory.code +
+                                                  "_" +
+                                                  spaceMetal.spaceTypeCode
+                                                }
+                                                onChange={() =>
+                                                  handleChangeMetal(
+                                                    metalSubcategory.code,
+                                                    metalCategory.code,
+                                                    spaceMetal.spaceTypeCode
+                                                  )
+                                                }
+                                                containerClass={"col-12 mb-2"}
+                                              />
+                                            );
+                                          }
+                                        )}
+                                      </Accordion.Body>
+                                    </Accordion>
+                                  );
+                                }
+                              )}
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        );
                       })}
                     </Accordion>
                     <Row className="mb-3">

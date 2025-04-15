@@ -13,9 +13,13 @@ const Tarifa = React.lazy(() => import("../views/tarifa/Tarifa"));
 // Materia Prima
 const MateriaPrima = React.lazy(() => import("../views/materia-prima/MateriaPrima"));
 
+// Color
+const Color = React.lazy(() => import("../views/color/Color"));
+
 // Producto
-const Producto = React.lazy(() => import("../views/producto/Producto"));
+const Producto = React.lazy(() => import("../views/producto/Product"));
 const DetalleProducto = React.lazy(() => import("../views/producto/DetalleProducto"));
+const ProductMaintenance = React.lazy(() => import("../views/producto/ProductMaintenance"));
 
 // auth
 const Login = React.lazy(() => import("../pages/auth/Login"));
@@ -283,7 +287,7 @@ const MateriaPrimaRoutes: RoutesProps = {
 };
 
 const ProductoRoutes: RoutesProps = {
-  path: "/producto",
+  path: "/product",
   name: "Producto",
   route: PrivateRoute,
   roles: ["Admin"],
@@ -292,12 +296,34 @@ const ProductoRoutes: RoutesProps = {
   header: "Producto",
   children: [
     {
-      path: "/producto/detalle",
+      path: "/product/detail",
       name: "Detalle Producto",
       element: <DetalleProducto />,
       route: PrivateRoute,
+    },
+    {
+      path: "/product/add",
+      name: "Registrar Producto",
+      element: <ProductMaintenance />,
+      route: PrivateRoute,
+    },
+    {
+      path: "/product/edit",
+      name: "Modificar Producto",
+      element: <ProductMaintenance />,
+      route: PrivateRoute,
     }
   ]
+};
+
+const ColorRoutes: RoutesProps = {
+  path: "/color",
+  name: "Color",
+  route: PrivateRoute,
+  roles: ["Admin"],
+  icon: "calendar",
+  element: <Color/>,
+  header: "Color",
 };
 
 const calendarAppRoutes: RoutesProps = {
@@ -589,6 +615,7 @@ const appRoutes = [
   TarifaRoutes,
   MateriaPrimaRoutes,
   ProductoRoutes,
+  ColorRoutes,
   calendarAppRoutes,
   chatAppRoutes,
   ecommerceAppRoutes,

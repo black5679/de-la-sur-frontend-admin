@@ -8,7 +8,7 @@ import Table from "../../components/Table";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { PaginateResponse } from "../../base/paginate.response";
-import { IGetProductoResponse } from "../../responses/producto/get-producto.response";
+import { IGetProductResponse } from "../../responses/producto/get-producto.response";
 import { IGetPaginateProductoRequest } from "../../requests/producto/get-paginate-producto.request";
 import { GetPaginateTarifaRequest } from "../../requests/tarifa/get-paginate-tarifa.request";
 import { getPaginateProducto } from "../../redux/producto/actions";
@@ -37,12 +37,12 @@ const ActionColumn = () => {
 const columns = [
     {
         Header: "Producto",
-        accessor: "nombre",
+        accessor: "name",
         sort: true
     },
     {
         Header: "Categoría",
-        accessor: "categoriaProducto",
+        accessor: "productTypeName",
         sort: true,
     },
     {
@@ -54,12 +54,12 @@ const columns = [
 ];
 
 // main component
-const Producto = () => {
+const Product = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [request] = useState<IGetPaginateProductoRequest>(new GetPaginateTarifaRequest());
     // const [filter, setFilter] = useState<IFilter>({ materiales: "" });
 
-    const { productos, loading }: { productos: PaginateResponse<IGetProductoResponse>, loading: boolean } = useSelector(
+    const { productos, loading }: { productos: PaginateResponse<IGetProductResponse>, loading: boolean } = useSelector(
         (state: RootState) => ({
             productos: state.Producto.productos,
             loading: state.Producto.loading,
@@ -147,4 +147,4 @@ const Producto = () => {
     );
 };
 
-export default Producto;
+export default Product;

@@ -1,11 +1,8 @@
 import jwtDecode from "jwt-decode";
 import axios from "axios";
 
-import config from "../../config";
-
 // content type
 axios.defaults.headers.post["Content-Type"] = "application/json";
-axios.defaults.baseURL = config.API_URL;
 // intercepting to capture errors
 axios.interceptors.response.use(
   (response) => {
@@ -140,7 +137,15 @@ class APICore {
   delete = (url: string) => {
     return axios.delete(url);
   };
-
+  createFormUrlencoded = (url: string, data: any) => {
+    const config = {
+      headers: {
+        ...axios.defaults.headers,
+        "content-type": "application/x-www-form-urlencoded",
+      },
+    };
+    return axios.post(url, data, config);
+  };
   /**
    * post given data to url with file
    */

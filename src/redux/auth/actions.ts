@@ -42,11 +42,11 @@ export const authApiResponseError = (
 });
 
 export const loginUser = (
-  correo: string,
+  username: string,
   password: string
 ): AuthActionType => ({
   type: AuthActionTypes.LOGIN_USER,
-  payload: { correo, password },
+  payload: { username, password },
 });
 
 export const logoutUser = (): AuthActionType => ({
@@ -63,9 +63,9 @@ export const signupUser = (
   payload: { fullname, email, password },
 });
 
-export const forgotPassword = (correo: string): AuthActionType => ({
+export const forgotPassword = (username: string): AuthActionType => ({
   type: AuthActionTypes.FORGOT_PASSWORD,
-  payload: { correo },
+  payload: { username },
 });
 
 export const resetAuth = (): AuthActionType => ({

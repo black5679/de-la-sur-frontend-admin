@@ -9,6 +9,8 @@ export interface ProductoActionType {
     | ProductoActionTypes.GETPAGINATE
     | ProductoActionTypes.GETBYID
     | ProductoActionTypes.GETIMAGE
+    | ProductoActionTypes.INIT_REGISTER
+    | ProductoActionTypes.GET_BY_ID_PRODUCT_TYPE
     payload: {} | string;
 }
 
@@ -34,12 +36,22 @@ export const getPaginateProducto = (request: IPaginateRequest): ProductoActionTy
     payload: request,
 });
 
-export const getByIdProducto = (idProducto: number): ProductoActionType => ({
+export const getByIdProducto = (id: string): ProductoActionType => ({
     type: ProductoActionTypes.GETBYID,
-    payload: { idProducto }
+    payload: { id }
 });
 
 export const getImageProducto = (container: string, path: string): ProductoActionType => ({
     type: ProductoActionTypes.GETIMAGE,
     payload: { container, path }
+});
+
+export const initRegisterProduct = (): ProductoActionType => ({
+    type: ProductoActionTypes.INIT_REGISTER,
+    payload: { }
+});
+
+export const getByIdProductType = (id: string): ProductoActionType => ({
+    type: ProductoActionTypes.GET_BY_ID_PRODUCT_TYPE,
+    payload: { id }
 });

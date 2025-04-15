@@ -2,7 +2,7 @@ import React, { useState, InputHTMLAttributes } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 import classNames from "classnames";
 
-import { FieldErrors, Control } from "react-hook-form";
+import { FieldErrors, Control, Controller } from "react-hook-form";
 import Select from "react-select";
 
 interface PasswordInputProps {
@@ -82,6 +82,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   closeMenuOnSelect?: boolean;
   isMulti?: boolean;
   options?: any;
+  onChange?: any;
   value?: any;
 }
 
@@ -106,12 +107,12 @@ const FormInput = ({
   closeMenuOnSelect,
   isMulti,
   options,
+  onChange,
   ...otherProps
 }: FormInputProps) => {
   // handle input type
   const comp =
     type === "textarea" ? "textarea" : type === "select" ? "select" : "input";
-
   return (
     <>
       {type === "hidden" ? (
@@ -179,13 +180,36 @@ const FormInput = ({
                 </>
               ) : (
                 <>
-                  {type === "select" ? (
-                    <>
-                      <Form.Group className={containerClass}>
-                        {label ? (
-                          <Form.Label className={labelClassName}>{label}</Form.Label>
-                        ) : null}
-                        <Select
+                  {type === "select" ? 
+                      <>
+                        <Form.Group className={containerClass}>
+                          {label ? (
+                            <Form.Label className={labelClassName}>{label}</Form.Label>
+                          ) : null}
+                          {control ? 
+                          (<Controller
+                            name={name}
+                            control={control}
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                options={options}
+                                isMulti={isMulti}
+                                value={value}
+                                id={name}
+                                isDisabled={isDisabled}
+                                hideSelectedOptions={hideSelectedOptions}
+                                closeMenuOnSelect={closeMenuOnSelect}
+                                isFocused={true}
+                                onChange={(selectedOptions) => {
+                                  isMulti ? field.onChange(selectedOptions ? selectedOptions.map((option: any) => option.value) : []) : field.onChange(selectedOptions ? selectedOptions.value : '');
+                                  if (onChange) onChange(selectedOptions);
+                                }
+                                }
+                                classNamePrefix={errors && errors[name] ? 'is-invalid' : ''}
+                              />
+                            )}
+                          />) : (<Select
                           type={type}
                           placeholder={placeholder}
                           name={name}
@@ -201,18 +225,18 @@ const FormInput = ({
                           ref={(r: HTMLInputElement) => {
                             if (refCallback) refCallback(r);
                           }}
-                          setValue={setValue(name, value || [])}
+                          setValue={setValue ? setValue(name, value || []) : {}}
                           {...(register ? register(name) : {})}
                           {...otherProps}
-                        />
-                        {errors && errors[name] ? (
-                          <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
-                            {errors[name].message}
-                          </Form.Control.Feedback>
-                        ) : null}
-                      </Form.Group>
-                    </>
-                  ) : (
+                        />)}
+                          {errors && errors[name] ? (
+                            <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
+                              {errors[name].message}
+                            </Form.Control.Feedback>
+                          ) : null}
+                        </Form.Group>
+                      </>
+                   : (
                     <Form.Group className={containerClass}>
                       {label ? (
                         <Form.Label className={labelClassName}>{label}</Form.Label>
@@ -229,6 +253,7 @@ const FormInput = ({
                         }}
                         className={className}
                         isInvalid={errors && errors[name] ? true : false}
+                        setvalue={setValue ? setValue(name, value || "") : {}}
                         {...(register ? register(name) : {})}
                         rows={rows}
                         {...otherProps}
